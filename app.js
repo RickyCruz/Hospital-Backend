@@ -1,6 +1,7 @@
 const dotenv = require('dotenv-safe');
 const express = require('express');
 const mongoose = require('mongoose');
+const bodyParser = require('body-parser')
 
 dotenv.config({ allowEmptyValues: true });
 
@@ -20,6 +21,13 @@ mongoose.connect(dbConnection, { useUnifiedTopology: true, useNewUrlParser: true
     .catch(error => console.error('Error', error));
 
 const app = express();
+
+// Body Parser
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
 
 // Routes
 app.use('/users', userRoutes);
