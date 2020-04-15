@@ -1,4 +1,6 @@
 const express = require('express');
+const bcrypt = require('bcryptjs')
+
 const app = express();
 
 const User = require('../models/user');
@@ -30,7 +32,7 @@ app.post('/', (request, response, next) => {
     let user = new User({
         name: body.name,
         email: body.email,
-        password: body.password,
+        password: bcrypt.hashSync(body.password, 10),
         img: body.img,
         role: body.role
     });
