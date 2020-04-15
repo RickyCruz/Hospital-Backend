@@ -98,4 +98,31 @@ app.patch('/:id', (request, response, next) => {
     });
 });
 
+// Delete
+app.delete('/:id', (request, response, next) => {
+    let id = request.params.id;
+
+    User.findByIdAndRemove(id, (error, userDeleted) => {
+        if (error) {
+            return response.status(500).json({
+                success: false,
+                message: 'Oops! An error occurred while deleting the user',
+                errors: error
+            });
+        }
+
+        if (! userDeleted) {
+            return response.status(400).json({
+                success: false,
+                message: 'Oops! User does not exist',
+                errors: { message: 'User not found' }
+            });
+        }
+
+        response.status(200).json({
+            success: true,
+            user: userDeleted
+        });
+    });
+});
 module.exports = app;
