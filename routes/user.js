@@ -37,7 +37,7 @@ app.post('/', (request, response, next) => {
 
     user.save((error, userCreated) => {
         if (error) {
-            return response.status(500).json({
+            return response.status(400).json({
                 success: false,
                 message: 'Oops! An error has occurred',
                 errors: error
@@ -45,9 +45,9 @@ app.post('/', (request, response, next) => {
         }
 
         response.status(201).json({
-                success: true,
-                user: userCreated
-            });
+            success: true,
+            user: userCreated
+        });
     });
 });
 

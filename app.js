@@ -16,7 +16,13 @@ const userRoutes = require('./routes/user');
 
 const dbConnection = `${DB_CONNECTION}://${DB_HOST}:${DB_PORT}/${DB_DATABASE}`;
 
-mongoose.connect(dbConnection, { useUnifiedTopology: true, useNewUrlParser: true })
+const dbOptions = {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true
+};
+
+mongoose.connect(dbConnection, dbOptions)
     .then(() => console.log('DB >\x1b[32m conected! \x1b[0m'))
     .catch(error => console.error('Error', error));
 
