@@ -1,13 +1,11 @@
 const express = require('express');
-const bcrypt = require('bcryptjs')
-const jwt = require('jsonwebtoken');
-
+const bcrypt = require('bcryptjs');
+const User = require('../models/user');
+const authMiddleware = require('../middlewares/authentication');
 const app = express();
 
-const User = require('../models/user');
-
 // Index
-app.get('/', (request, response, next) => {
+app.get('/', authMiddleware.verifyToken, (request, response, next) => {
     User.find({ }, 'name email img role').exec(
         (error, users) => {
             if (error) {
@@ -26,25 +24,8 @@ app.get('/', (request, response, next) => {
     );
 });
 
-// Token verify
-app.use('/', (request, response, next) => {
-    let token = request.query.token;
-
-    jwt.verify(token, process.env.JWT_SEED, (error, decoded) => {
-        if (error) {
-            return response.status(401).json({
-                success: false,
-                message: 'Unauthorized',
-                errors: error
-            });
-        }
-    });
-
-    next();
-});
-
 // Store
-app.post('/', (request, response, next) => {
+app.post('/', authMiddleware.verifyToken, (request, response, next) => {
     let body = request.body;
 
     let user = new User({
@@ -72,7 +53,7 @@ app.post('/', (request, response, next) => {
 });
 
 // Update
-app.patch('/:id', (request, response, next) => {
+app.patch('/:id', authMiddleware.verifyToken, (request, response, next) => {
     let id = request.params.id;
     let body = request.body;
 
@@ -117,7 +98,7 @@ app.patch('/:id', (request, response, next) => {
 });
 
 // Delete
-app.delete('/:id', (request, response, next) => {
+app.delete('/:id', authMiddleware.verifyToken, (request, response, next) => {
     let id = request.params.id;
 
     User.findByIdAndRemove(id, (error, userDeleted) => {
@@ -143,4 +124,5 @@ app.delete('/:id', (request, response, next) => {
         });
     });
 });
+
 module.exports = app;

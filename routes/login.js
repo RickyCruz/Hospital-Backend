@@ -31,14 +31,14 @@ app.post('/', (request, response, next) => {
             });
         }
 
+        userDB.password = '🤭';
+
         // Create token
         let token = jwt.sign(
             { user: userDB },
             process.env.JWT_SEED,
             { expiresIn: process.env.JWT_TOKEN_EXPIRATION }
         );
-
-        userDB.password = '🤭';
 
         response.status(200).json({
             success: true,
