@@ -1,5 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken');
 
 const app = express();
 
@@ -23,6 +24,23 @@ app.get('/', (request, response, next) => {
             });
         }
     );
+});
+
+// Token verify
+app.use('/', (request, response, next) => {
+    let token = request.query.token;
+
+    jwt.verify(token, process.env.JWT_SEED, (error, decoded) => {
+        if (error) {
+            return response.status(401).json({
+                success: false,
+                message: 'Unauthorized',
+                errors: error
+            });
+        }
+    });
+
+    next();
 });
 
 // Store
