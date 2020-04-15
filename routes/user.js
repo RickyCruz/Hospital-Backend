@@ -53,4 +53,49 @@ app.post('/', (request, response, next) => {
     });
 });
 
+// Update
+app.patch('/:id', (request, response, next) => {
+    let id = request.params.id;
+    let body = request.body;
+
+    User.findById(id, (error, user) => {
+        if (error) {
+            return response.status(500).json({
+                success: false,
+                message: 'Oops! An error occurred while searching for user',
+                errors: error
+            });
+        }
+
+        if (! user) {
+            return response.status(400).json({
+                success: false,
+                message: 'Oops! User does not exist',
+                errors: { message: 'User not found' }
+            });
+        }
+
+        user.name = body.name;
+        user.email = body.email;
+        user.role = body.role;
+
+        user.save((error, userUpdated) => {
+            if (error) {
+                return response.status(400).json({
+                    success: false,
+                    message: 'Oops! Error updating user',
+                    errors: error
+                });
+            }
+
+            userUpdated.password = '🤭';
+
+            response.status(200).json({
+                success: true,
+                user: userUpdated
+            });
+        });
+    });
+});
+
 module.exports = app;
