@@ -5,22 +5,24 @@ const app = express();
 
 // Index
 app.get('/', (request, response, next) => {
-    Hospital.find({ }).exec(
-        (error, hospitals) => {
-            if (error) {
-                return response.status(500).json({
-                    success: false,
-                    message: 'Error loading hospitals',
-                    errors: error
+    Hospital.find({ })
+        .populate('user', 'name email')
+        .exec(
+            (error, hospitals) => {
+                if (error) {
+                    return response.status(500).json({
+                        success: false,
+                        message: 'Error loading hospitals',
+                        errors: error
+                    });
+                }
+
+                response.status(200).json({
+                    success: true,
+                    hospitals: hospitals
                 });
             }
-
-            response.status(200).json({
-                success: true,
-                hospitals: hospitals
-            });
-        }
-    );
+        );
 });
 
 // Store

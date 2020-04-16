@@ -5,22 +5,25 @@ const app = express();
 
 // Index
 app.get('/', (request, response, next) => {
-    Doctor.find({ }).exec(
-        (error, doctors) => {
-            if (error) {
-                return response.status(500).json({
-                    success: false,
-                    message: 'Error loading doctors',
-                    errors: error
+    Doctor.find({ })
+        .populate('user', 'name email img')
+        .populate('hospital')
+        .exec(
+            (error, doctors) => {
+                if (error) {
+                    return response.status(500).json({
+                        success: false,
+                        message: 'Error loading doctors',
+                        errors: error
+                    });
+                }
+
+                response.status(200).json({
+                    success: true,
+                    doctors: doctors
                 });
             }
-
-            response.status(200).json({
-                success: true,
-                doctors: doctors
-            });
-        }
-    );
+        );
 });
 
 // Store
