@@ -17,6 +17,7 @@ const hospitalRoutes = require('./routes/hospital');
 const doctorRoutes = require('./routes/doctor');
 const loginRoutes = require('./routes/login');
 const searchRoutes = require('./routes/search');
+const uploadRoutes = require('./routes/upload');
 
 const dbConnection = `${DB_CONNECTION}://${DB_HOST}:${DB_PORT}/${DB_DATABASE}`;
 
@@ -45,6 +46,8 @@ app.use('/hospitals', hospitalRoutes);
 app.use('/doctors', doctorRoutes);
 app.use('/login', loginRoutes);
 app.use('/search', searchRoutes);
+app.use('/upload', uploadRoutes);
+
 app.use('/', appRoutes);
 
 app.listen(APP_PORT, () => {
