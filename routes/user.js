@@ -5,23 +5,32 @@ const authMiddleware = require('../middlewares/authentication');
 const app = express();
 
 // Index
-app.get('/', authMiddleware.verifyToken, (request, response, next) => {
-    User.find({ }, 'name email img role').exec(
-        (error, users) => {
-            if (error) {
-                return response.status(500).json({
-                    success: false,
-                    message: 'Error loading users',
-                    errors: error
+app.get('/', (request, response, next) => {
+    var from = request.query.from || 0;
+    from = Number(from);
+
+    User.find({ }, 'name email img role')
+        .skip(from)
+        .limit(5)
+        .exec(
+            (error, users) => {
+                if (error) {
+                    return response.status(500).json({
+                        success: false,
+                        message: 'Error loading users',
+                        errors: error
+                    });
+                }
+
+                User.count({}, (error, count) => {
+                    response.status(200).json({
+                        success: true,
+                        users: users,
+                        total: count
+                    });
                 });
             }
-
-            response.status(200).json({
-                success: true,
-                users: users
-            });
-        }
-    );
+        );
 });
 
 // Store

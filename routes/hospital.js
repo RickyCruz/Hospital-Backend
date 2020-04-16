@@ -5,8 +5,13 @@ const app = express();
 
 // Index
 app.get('/', (request, response, next) => {
+    var from = request.query.from || 0;
+    from = Number(from);
+
     Hospital.find({ })
         .populate('user', 'name email')
+        .skip(from)
+        .limit(5)
         .exec(
             (error, hospitals) => {
                 if (error) {
@@ -17,9 +22,12 @@ app.get('/', (request, response, next) => {
                     });
                 }
 
-                response.status(200).json({
-                    success: true,
-                    hospitals: hospitals
+                Hospital.count({}, (error, count) => {
+                    response.status(200).json({
+                        success: true,
+                        hospitals: hospitals,
+                        total: count
+                    });
                 });
             }
         );
