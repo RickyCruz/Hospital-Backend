@@ -25,31 +25,36 @@ app.get('/all/:keyword', (request, response, next) => {
 
 function searchHospitals(search, regex) {
     return new Promise((resolve, reject) => {
-        Hospital.find({ name: regex }, (error, hospitals) => {
-            if (error) {
-                reject('Error loading hospitals');
-            } else {
-                resolve(hospitals);
-            }
-        });
+        Hospital.find({ name: regex })
+            .populate('user', 'name email')
+            .exec((error, hospitals) => {
+                if (error) {
+                    reject('Error loading hospitals');
+                } else {
+                    resolve(hospitals);
+                }
+            });
     });
 }
 
 function searchDoctors(search, regex) {
     return new Promise((resolve, reject) => {
-        Doctor.find({ name: regex }, (error, doctors) => {
-            if (error) {
-                reject('Error loading doctors');
-            } else {
-                resolve(doctors);
-            }
-        });
+        Doctor.find({ name: regex })
+            .populate('user', 'name email')
+            .populate('hospital')
+            .exec((error, doctors) => {
+                if (error) {
+                    reject('Error loading doctors');
+                } else {
+                    resolve(doctors);
+                }
+            });
     });
 }
 
 function searchUsers(search, regex) {
     return new Promise((resolve, reject) => {
-        User.find()
+        User.find({}, 'name email role')
             .or([{ name: regex }, { email: regex }])
             .exec((error, users) => {
                 if (error) {
