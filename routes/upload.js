@@ -1,5 +1,10 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
+const fs = require('fs');
+const User = require('../models/user');
+const Doctor = require('../models/doctor');
+const Hospital = require('../models/hospital');
+
 const app = express();
 
 // default options
@@ -53,7 +58,7 @@ app.patch('/:resource/:id', function(req, res) {
     // Use the mv() method to place the file somewhere on your server
     let path = `./uploads/${ resource }/${ newName }`;
 
-    file.mv(path, function(err) {
+    file.mv(path, err => {
         if (err) {
             return res.status(500).json({
                 success: false,
@@ -62,11 +67,95 @@ app.patch('/:resource/:id', function(req, res) {
             });
         }
 
-        res.status(200).json({
-            success: true,
-            message: 'File stored correctly'
-        });
+        uploadByType(resource, id, newName, res);
     });
 });
+
+function uploadByType(resource, id, newName, response) {
+    if (resource === 'users') {
+        User.findById(id, (error, user) => {
+
+            if (! user) {
+                return response.status(400).json({
+                    success: false,
+                    message: 'Oops! User does not exist',
+                    errors: { message: 'User not found' }
+                });
+            }
+
+            let prevPath = './uploads/users/' + user.img;
+
+            if (fs.existsSync(prevPath)) {
+                fs.unlinkSync(prevPath);
+            }
+
+            user.img = newName;
+
+            user.save((err, userUpdated ) => {
+                return response.status(200).json({
+                    success: true,
+                    message: 'Image updated',
+                    user: userUpdated,
+                });
+            });
+        });
+    }
+
+    if (resource === 'doctors') {
+        Doctor.findById(id, (error, doctor) => {
+            if (! doctor) {
+                return response.status(400).json({
+                    success: false,
+                    message: 'Oops! Doctor does not exist',
+                    errors: { message: 'Doctor not found' }
+                });
+            }
+
+            let prevPath = './uploads/doctors/' + doctor.img;
+
+            if (fs.existsSync(prevPath)) {
+                fs.unlinkSync(prevPath);
+            }
+
+            doctor.img = newName;
+
+            doctor.save((err, doctorUpdated ) => {
+                return response.status(200).json({
+                    success: true,
+                    message: 'Image updated',
+                    doctor: doctorUpdated,
+                });
+            });
+        });
+    }
+
+    if (resource === 'hospitals') {
+        Hospital.findById(id, (error, hospital) => {
+            if (! hospital) {
+                return response.status(400).json({
+                    success: false,
+                    message: 'Oops! Hospital does not exist',
+                    errors: { message: 'Hospital not found' }
+                });
+            }
+
+            let prevPath = './uploads/hospitals/' + hospital.img;
+
+            if (fs.existsSync(prevPath)) {
+                fs.unlinkSync(prevPath);
+            }
+
+            hospital.img = newName;
+
+            hospital.save((err, hospitalUpdated ) => {
+                return response.status(200).json({
+                    success: true,
+                    message: 'Image updated',
+                    hospital: hospitalUpdated,
+                });
+            });
+        });
+    }
+}
 
 module.exports = app;
