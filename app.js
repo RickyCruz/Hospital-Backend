@@ -13,6 +13,7 @@ const APP_PORT = process.env.APP_PORT;
 
 const appRoutes = require('./routes/app');
 const userRoutes = require('./routes/user');
+const hospitalRoutes = require('./routes/hospital');
 const loginRoutes = require('./routes/login');
 
 const dbConnection = `${DB_CONNECTION}://${DB_HOST}:${DB_PORT}/${DB_DATABASE}`;
@@ -38,6 +39,7 @@ app.use(bodyParser.json());
 
 // Routes
 app.use('/users', userRoutes);
+app.use('/hospitals', hospitalRoutes);
 app.use('/login', loginRoutes);
 app.use('/', appRoutes);
 
