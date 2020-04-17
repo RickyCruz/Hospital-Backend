@@ -18,6 +18,7 @@ const doctorRoutes = require('./routes/doctor');
 const loginRoutes = require('./routes/login');
 const searchRoutes = require('./routes/search');
 const uploadRoutes = require('./routes/upload');
+const imagesRoutes = require('./routes/images');
 
 const dbConnection = `${DB_CONNECTION}://${DB_HOST}:${DB_PORT}/${DB_DATABASE}`;
 
@@ -47,6 +48,7 @@ app.use('/doctors', doctorRoutes);
 app.use('/login', loginRoutes);
 app.use('/search', searchRoutes);
 app.use('/upload', uploadRoutes);
+app.use('/images', imagesRoutes);
 
 app.use('/', appRoutes);
 
