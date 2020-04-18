@@ -34,7 +34,7 @@ app.get('/', (request, response, next) => {
 });
 
 // Store
-app.post('/', authMiddleware.verifyToken, (request, response, next) => {
+app.post('/', (request, response, next) => {
     let body = request.body;
 
     let user = new User({

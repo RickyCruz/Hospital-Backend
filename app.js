@@ -1,7 +1,8 @@
 const dotenv = require('dotenv-safe');
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser')
+const bodyParser = require('body-parser');
+const cors = require('cors');
 
 dotenv.config({ allowEmptyValues: true });
 
@@ -33,6 +34,9 @@ mongoose.connect(dbConnection, dbOptions)
     .catch(error => console.error('Error', error));
 
 const app = express();
+
+// Enable All CORS Requests
+app.use(cors())
 
 // Body Parser
 // parse application/x-www-form-urlencoded
