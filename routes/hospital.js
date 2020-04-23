@@ -128,4 +128,33 @@ app.delete('/:id', authMiddleware.verifyToken, (request, response, next) => {
     });
 });
 
+// Show
+app.get('/:id', (req, res) => {
+    let id = req.params.id;
+    Hospital.findById(id)
+        .populate('user', 'name img email')
+        .exec((err, hospital) => {
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: 'Oops! An error occurred while searching for hospital',
+                    errors: err
+                });
+            }
+
+            if (! hospital) {
+                return response.status(400).json({
+                    success: false,
+                    message: 'Oops! Hospital does not exist',
+                    errors: { message: 'Hospital not found' }
+                });
+            }
+
+            res.status(200).json({
+                success: true,
+                hospital: hospital
+            });
+        });
+});
+
 module.exports = app;
