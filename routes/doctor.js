@@ -131,4 +131,34 @@ app.delete('/:id', authMiddleware.verifyToken, (request, response, next) => {
     });
 });
 
+// Show
+app.get('/:id', (req, res) => {
+    let id = req.params.id;
+    Doctor.findById(id)
+        .populate('user', 'name img email')
+        .populate('hospital')
+        .exec((err, doctor) => {
+            if (err) {
+                return res.status(500).json({
+                    success: false,
+                    message: 'Oops! An error occurred while searching for doctor',
+                    errors: err
+                });
+            }
+
+            if (! doctor) {
+                return response.status(400).json({
+                    success: false,
+                    message: 'Oops! Doctor does not exist',
+                    errors: { message: 'Doctor not found' }
+                });
+            }
+
+            res.status(200).json({
+                success: true,
+                doctor: doctor
+            });
+        });
+});
+
 module.exports = app;
