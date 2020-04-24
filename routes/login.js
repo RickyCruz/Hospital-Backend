@@ -44,9 +44,44 @@ app.post('/', (request, response, next) => {
             success: true,
             user: userDB,
             token: token,
-            id: userDB._id
+            id: userDB._id,
+            menu: getMenu(userDB.role)
         });
     });
+
+    function getMenu(role) {
+        let menu = [
+            {
+                title: 'General',
+                icon: 'mdi mdi-gauge',
+                submenu: [
+                    { title: 'Dashboard', url: '/dashboard' },
+                    { title: 'ProgressBar', url: '/progress' },
+                    { title: 'Charts', url: '/charts-one' },
+                    { title: 'Promises', url: '/promises' },
+                    { title: 'RxJs', url: '/rxjs' },
+                    { title: 'Settings', url: '/account-settings' },
+                ]
+            },
+            {
+                title: 'Maintenance',
+                icon: 'mdi mdi-folder-lock-open',
+                submenu: [
+                    //{ title: 'Users', url: '/users' },
+                    //{ title: 'Hospitals', url: '/hospitals' },
+                    //{ title: 'Doctors', url: '/doctors' },
+                ]
+            },
+        ];
+
+        if (role === 'ADMIN_ROLE') {
+            menu[1].submenu.unshift({ title: 'Users', url: '/users' });
+            menu[1].submenu.unshift({ title: 'Hospitals', url: '/hospitals' });
+            menu[1].submenu.unshift({ title: 'Doctors', url: '/doctors' });
+        }
+
+        return menu;
+    }
 
 });
 
