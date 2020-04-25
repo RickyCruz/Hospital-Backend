@@ -34,7 +34,7 @@ app.get('/', (request, response, next) => {
 });
 
 // Store
-app.post('/', (request, response, next) => {
+app.post('/', authMiddleware.isAdmin, (request, response, next) => {
     let body = request.body;
 
     let user = new User({
@@ -62,7 +62,7 @@ app.post('/', (request, response, next) => {
 });
 
 // Update
-app.patch('/:id', authMiddleware.verifyToken, (request, response, next) => {
+app.patch('/:id', [authMiddleware.verifyToken, authMiddleware.isAdmin], (request, response, next) => {
     let id = request.params.id;
     let body = request.body;
 
@@ -107,7 +107,7 @@ app.patch('/:id', authMiddleware.verifyToken, (request, response, next) => {
 });
 
 // Delete
-app.delete('/:id', authMiddleware.verifyToken, (request, response, next) => {
+app.delete('/:id', [authMiddleware.verifyToken, authMiddleware.isAdmin], (request, response, next) => {
     let id = request.params.id;
 
     User.findByIdAndRemove(id, (error, userDeleted) => {

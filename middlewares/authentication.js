@@ -18,3 +18,17 @@ exports.verifyToken = function (request, response, next) {
     });
 };
 
+exports.isAdmin = function (request, response, next) {
+    let user = request.user;
+
+    if (user.role === 'ADMIN_ROLE') {
+        next();
+        return;
+    } else {
+        return response.status(401).json({
+            success: false,
+            message: 'Unauthorized',
+            errors: { message: 'You cannot perform this action' }
+        });
+    }
+};
