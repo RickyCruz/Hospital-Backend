@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const app = express();
 const User = require('../models/user');
+const authMiddleware = require('../middlewares/authentication');
 
 app.post('/', (request, response, next) => {
     let body = request.body;
@@ -48,41 +49,51 @@ app.post('/', (request, response, next) => {
             menu: getMenu(userDB.role)
         });
     });
+});
 
-    function getMenu(role) {
-        let menu = [
-            {
-                title: 'General',
-                icon: 'mdi mdi-gauge',
-                submenu: [
-                    { title: 'Dashboard', url: '/dashboard' },
-                    { title: 'ProgressBar', url: '/progress' },
-                    { title: 'Charts', url: '/charts-one' },
-                    { title: 'Promises', url: '/promises' },
-                    { title: 'RxJs', url: '/rxjs' },
-                    { title: 'Settings', url: '/account-settings' },
-                ]
-            },
-            {
-                title: 'Maintenance',
-                icon: 'mdi mdi-folder-lock-open',
-                submenu: [
-                    //{ title: 'Users', url: '/users' },
-                    //{ title: 'Hospitals', url: '/hospitals' },
-                    //{ title: 'Doctors', url: '/doctors' },
-                ]
-            },
-        ];
+app.get('/refresh-token', authMiddleware.verifyToken, (request, response, next) => {
+    // Create token
+    let token = jwt.sign(
+        { user: request.user },
+        process.env.JWT_SEED,
+        { expiresIn: process.env.JWT_TOKEN_EXPIRATION }
+    );
 
-        if (role === 'ADMIN_ROLE') {
-            menu[1].submenu.unshift({ title: 'Users', url: '/users' });
-            menu[1].submenu.unshift({ title: 'Hospitals', url: '/hospitals' });
-            menu[1].submenu.unshift({ title: 'Doctors', url: '/doctors' });
-        }
+    return response.status(500).json({
+        success: true,
+        token: token
+    });
+});
 
-        return menu;
+function getMenu(role) {
+    let menu = [
+        {
+            title: 'General',
+            icon: 'mdi mdi-gauge',
+            submenu: [
+                { title: 'Dashboard', url: '/dashboard' },
+                { title: 'ProgressBar', url: '/progress' },
+                { title: 'Charts', url: '/charts-one' },
+                { title: 'Promises', url: '/promises' },
+                { title: 'RxJs', url: '/rxjs' },
+                { title: 'Settings', url: '/account-settings' },
+            ]
+        },
+    ];
+
+    if (role === 'ADMIN_ROLE') {
+        menu.push({
+            title: 'Maintenance',
+            icon: 'mdi mdi-folder-lock-open',
+            submenu: [
+                { title: 'Users', url: '/users' },
+                { title: 'Hospitals', url: '/hospitals' },
+                { title: 'Doctors', url: '/doctors' },
+            ]
+        });
     }
 
-});
+    return menu;
+}
 
 module.exports = app;
