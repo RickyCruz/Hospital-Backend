@@ -34,7 +34,7 @@ app.get('/', (request, response, next) => {
 });
 
 // Store
-app.post('/', authMiddleware.isAdmin, (request, response, next) => {
+app.post('/', (request, response, next) => {
     let body = request.body;
 
     let user = new User({
@@ -62,7 +62,7 @@ app.post('/', authMiddleware.isAdmin, (request, response, next) => {
 });
 
 // Update
-app.patch('/:id', [authMiddleware.verifyToken, authMiddleware.isAdmin], (request, response, next) => {
+app.patch('/:id', [authMiddleware.verifyToken, authMiddleware.himself], (request, response, next) => {
     let id = request.params.id;
     let body = request.body;
 

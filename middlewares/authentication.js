@@ -32,3 +32,19 @@ exports.isAdmin = function (request, response, next) {
         });
     }
 };
+
+exports.himself = function (request, response, next) {
+    let user = request.user;
+    let id = request.params.id;
+
+    if (user.role === 'ADMIN_ROLE' || user._id === id) {
+        next();
+        return;
+    } else {
+        return response.status(401).json({
+            success: false,
+            message: 'Unauthorized',
+            errors: { message: 'You cannot perform this action' }
+        });
+    }
+};
