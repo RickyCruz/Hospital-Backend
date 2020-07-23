@@ -17,4 +17,11 @@ let userSchema = new Schema({
 
 userSchema.plugin(uniqueValidator, { message: 'The {PATH} has already been taken'});
 
+userSchema.method('toJSON', function() {
+    const { __v, _id, password, ...object } = this.toObject();
+    object._id = _id;
+
+    return object;
+})
+
 module.exports = mongoose.model('User', userSchema);

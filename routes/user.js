@@ -96,8 +96,6 @@ app.patch('/:id', [authMiddleware.verifyToken, authMiddleware.himself], (request
                 });
             }
 
-            userUpdated.password = '🤭';
-
             response.status(200).json({
                 success: true,
                 user: userUpdated

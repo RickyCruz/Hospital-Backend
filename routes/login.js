@@ -32,8 +32,6 @@ app.post('/', (request, response, next) => {
             });
         }
 
-        userDB.password = '🤭';
-
         // Create token
         let token = jwt.sign(
             { user: userDB },
